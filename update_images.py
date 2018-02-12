@@ -3,7 +3,7 @@
 from __future__ import division
 import feedparser
 import re
-import os
+import os, sys
 import urllib2
 # import Image
 from HTMLParser import HTMLParser
@@ -33,6 +33,9 @@ def text_overlay(imgfile, file_path, title, text):
     im = Image.open(imgfile).convert('RGBA')
     # Get image size
     w,h = im.size
+    if w < 1024:
+        print("Image is too small. Skipping!")
+        continue
     w_lim = 1920
     r = h/w
     im = im.resize((w_lim,int(r*w_lim)), resample=Image.BICUBIC)
@@ -58,7 +61,7 @@ def text_overlay(imgfile, file_path, title, text):
             draw.text((w-max_width-margin/2,h-height+cpos_h-margin/2) ,line, fill=(255,255,255,255), font=font)
     im.save(file_path, 'PNG')
 
-path = os.path.join(os.getcwd(),"wallpapers")
+path = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])),"wallpapers")
 RSS_FEEDS = {'apod':['https://apod.nasa.gov/apod.rss'], 'reddit':['https://www.reddit.com/r/wallpaper/.rss']}
 temp_file = os.path.join(path, "temp.jpg")
 
