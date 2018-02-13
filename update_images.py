@@ -10,8 +10,8 @@ from HTMLParser import HTMLParser
 from PIL import Image, ImageFont, ImageDraw
 import textwrap
 
-# import pdb
-# pdb.set_trace()
+#import pdb
+#pdb.set_trace()
 
 class MLStripper(HTMLParser):
     def __init__(self):
@@ -33,9 +33,9 @@ def text_overlay(imgfile, file_path, title, text):
     im = Image.open(imgfile).convert('RGBA')
     # Get image size
     w,h = im.size
-    if w < 1024:
+    if w < 1920:
         print("Image is too small. Skipping!")
-        continue
+        return
     w_lim = 1920
     r = h/w
     im = im.resize((w_lim,int(r*w_lim)), resample=Image.BICUBIC)
@@ -62,7 +62,7 @@ def text_overlay(imgfile, file_path, title, text):
     im.save(file_path, 'PNG')
 
 path = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])),"wallpapers")
-RSS_FEEDS = {'apod':['https://apod.nasa.gov/apod.rss'], 'reddit':['https://www.reddit.com/r/wallpaper/.rss']}
+RSS_FEEDS = {'apod':['https://apod.nasa.gov/apod.rss'], 'reddit':['https://www.reddit.com/r/wallpaper/.rss','https://www.reddit.com/r/MinimalWallpaper/.rss']}
 temp_file = os.path.join(path, "temp.jpg")
 
 # f = feedparser.parse('https://apod.nasa.gov/apod.rss')
@@ -84,14 +84,14 @@ for (category, links) in RSS_FEEDS.iteritems():
             if category == 'apod':
                 web_link = item.link
                 html_data = urllib2.urlopen(web_link).read()
-                desc = strip_tags(pattern_desc[category][i].findall(html_data)[0])
+                desc = strip_tags(pattern_desc[category][0].findall(html_data)[0])
                 desc = re.sub("\n+"," ", desc)
                 # print(desc)
-                img_link = pattern_img[category][i].findall(html_data)[0]
+                img_link = pattern_img[category][0].findall(html_data)[0]
                 img_link = "https://apod.nasa.gov/apod/" + img_link
                 print(img_link)
             elif category == 'reddit':
-                img_link = pattern_img[category][i].findall(item.content[0].value)[0]
+                img_link = pattern_img[category][0].findall(item.content[0].value)[0]
                 desc = None
                 print(img_link)
             
